@@ -1,31 +1,23 @@
 import random
 import hashlib
+import en # self-made module
 
-# Taking two variables for understanding purpose
-N = 97
-n = 32
 
-class User :
-    '''
-    It will generate random bits which will go to SEAF
-    '''
-    def generate_bits(bits) :
-        return random.getrandbits(bits)
-    
 
-    """
-    we are importing two functions in runtime , hmac module it will return a HMAC object
-    hashlib = it will import all the hashing algorithms
-    This below function will return a hashed_value for a given secret key and message
-    for authentication use hashed_value.compare_digest() function instead of "==" to avoid hacking
-    """
-    def convert_to_hash(self , public_key , data) : # This function will convert data to hash form
-        global key
-        key = public_key
-        import hmac
-        import hashlib
-        hashed_value = hmac.new(public_key , data , hashlib.sha128).digest() # we can use sha1 also to make it lightweight
-        return hashed_value
+SUCI = b"HELLO"
+public_key = b"jdijfufudjf"
+
+class UE :
+    # send SUCI value to SEAF
+        
+    new = en.Encrypt(SUCI ,public_key)
+    def encryption(self) :
+        encrypted_data = self.new.encryption()
+        return encrypted_data
+
+    def decryption(self) : 
+        decrypted_data = self.new.decryption()  
+        return decrypted_data  
     
     """
     These function will calculate the other keys
@@ -39,19 +31,6 @@ class User :
 
         return (Ke , Kn , Ka , Ks , I)
     
-
-
-    
-    """
-    Getting authentication token from the seaf in the second run.
-    This function will take care of authentication.{
-        if authentication fails then UE will send the failure message to SN.
-        otherwise It will calculate the res and send to SEAF.
-    }
-    
-    This function will extract the XMAC , SQN from the autentication token and SEAF also sends RAND number.
-    """
-
     def authentication(self , public_key) :
         Ke , Kn , Ka , Ks , I = self.other_keys(public_key)
 
@@ -89,28 +68,5 @@ class User :
         else : 
             print("Authentication failed")
 
-    def send_MAC_A(self) :
-        return self.MAC_A
-
-    def send_MAC_S(self) :
-        return self.MAC_S
-            
-
-
-
-            
-
-
-    
     
 
-
-
-        
-
-
-    
-    
-    
-
-        
