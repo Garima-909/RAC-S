@@ -3,7 +3,7 @@ import hashlib
 import en # self-made module
 
 
-
+n = 45
 SUCI = b"HELLO"
 public_key = b"jdijfufudjf"
 
@@ -11,10 +11,13 @@ class UE :
     # send SUCI value to SEAF
         
     new = en.Encrypt(SUCI ,public_key)
+
+    # This is the encrypted of SUCI
     def encryption(self) :
         encrypted_data = self.new.encryption()
         return encrypted_data
 
+    # This is the decrypted form of SUCI
     def decryption(self) : 
         decrypted_data = self.new.decryption()  
         return decrypted_data  
@@ -24,15 +27,43 @@ class UE :
     """
     def other_keys(public_key) :
         Ke = public_key[:16] # extracing first sixteen bytes
-        Kn = public_key[16:32] # extracing next sixteen bytes
-        Ka = public_key[32:48] # extracing next sixteen bytes
-        Ks = public_key[48:64] # extracing next sixteen bytes
-        I = public_key[64:] # extracing remaining bytes
 
-        return (Ke , Kn , Ka , Ks , I)
+        # Encryption of Keys starts from here , E means encrypted
+        EKe = en.Encrypt(Ke , public_key)
+        Kn = public_key[16:32] # extracing next sixteen bytes
+        EKn = en.Encrypt(Kn , public_key)
+        Ka = public_key[32:48] # extracing next sixteen bytes
+        EKa = en.Encrypt(Kn , public_key)
+        Ks = public_key[48:64] # extracing next sixteen bytes
+        EKs = en.Encrypt(Ks , public_key)
+        I = public_key[64:] # extracing remaining bytes
+        EI = en.Encrypt(I , public_key)
+
+        # Encryption of keys
+        EKs.encryption()
+        EKe.encryption()
+        EKn.encryption()
+        EKa.encryption()
+        EI.encryption()
+
+        return (EKe , EKn , EKa , EKs , EI)
     
     def authentication(self , public_key) :
-        Ke , Kn , Ka , Ks , I = self.other_keys(public_key)
+        EKe , EKn , EKa , EKs , EI = self.other_keys(public_key)
+
+        # Decryption of above keys starts from here
+        ke = en.Encrypt(EKe , public_key)
+        kn = en.Encrypt(EKn , public_key)
+        ka = en.Encrypt(EKa , public_key)
+        ks = en.Encrypt(EKs , public_key)
+        i = en.Encrypt(EI , public_key)
+
+        # Decyption starts from here
+        Ke = ke.decryption()
+        Kn = kn.decryption()
+        Ka = ka.decryption()
+        Ks = ks.decryption()
+        I = i.decryption()
 
 
         # Generation AUTN and RAND values which will come from SEAF to UE.
